@@ -87,4 +87,3 @@ namespace MongoOutbox.Endpoint2
         }
     }
 }
-}
