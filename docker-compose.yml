@@ -1,0 +1,62 @@
+version: "3"
+services:
+  
+  mongo1:
+    hostname: mongo1  
+    container_name: mongo1
+    image: mongo:latest
+    # expose:
+    # - 27017
+    ports:
+      - 27011:27017
+    volumes:
+      - mongo1:/data/db
+    networks:
+      - mongo-elastic
+    #restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+  
+  mongo2:
+    hostname: mongo2
+    container_name: mongo2
+    image: mongo:latest
+    # expose:
+    # - 27017
+    ports:
+    - 27012:27017
+    volumes:
+      - mongo2:/data/db
+    networks:
+      - mongo-elastic
+    #restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+  
+  mongo3:
+    hostname: mongo3
+    container_name: mongo3
+    image: mongo:latest
+    # expose:
+    # - 27017
+    ports:
+    - 27013:27017
+    volumes:
+      - mongo3:/data/db
+    networks:
+      - mongo-elastic
+    #restart: always
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
+
+volumes:
+  mongo1:
+    driver: local
+  mongo2:
+    driver: local
+  mongo3:
+    driver: local
+
+networks:
+  mongo-elastic:
+    driver: bridge
+
+#https://gist.github.com/asoorm/7822cc742831639c93affd734e97ce4f
+#https://docs.mongodb.com/manual/reference/connection-string/#examples
