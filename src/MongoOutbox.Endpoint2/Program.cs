@@ -44,9 +44,11 @@ namespace MongoOutbox.Endpoint2
 
                 endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
                 endpointConfiguration.AuditProcessedMessagesTo("MongoOutbox.Audit");
-                endpointConfiguration.UsePersistence<InMemoryPersistence>();
-
-                var persistence = endpointConfiguration.UsePersistence<MongoPersistence>().DatabaseName("MongoOutboxEndpoint2");
+                
+                //endpointConfiguration.UsePersistence<InMemoryPersistence>();
+                var persistence = endpointConfiguration.UsePersistence<MongoPersistence>();
+                persistence.MongoClient(new MongoClient("mongodb://localhost:27011"));
+                persistence.DatabaseName("MongoOutboxEndpoint2");
 
                 endpointConfiguration.UseSerialization<NewtonsoftSerializer>();
                 endpointConfiguration.DefineCriticalErrorAction(OnCriticalError);
@@ -59,7 +61,8 @@ namespace MongoOutbox.Endpoint2
 
             builder.ConfigureServices((context, services) =>
             {
-                services.AddSingleton<IMongoClient>(provider => new MongoClient("mongodb://root:rootpassword@127.0.0.1:27017"));
+                //services.AddSingleton<IMongoClient>(provider => new MongoClient("mongodb://root:rootpassword@127.0.0.1:27017"));
+                services.AddSingleton<IMongoClient>(provider => new MongoClient("mongodb://localhost:27011"));
                 //https://kevsoft.net/2020/06/25/storing-guids-as-strings-in-mongodb-with-csharp.html
                 var pack = new ConventionPack { new GuidAsStringRepresentationConvention() };
                 ConventionRegistry.Register("GUIDs as strings Conventions", pack, type => type.Namespace.StartsWith("MongoOutbox"));

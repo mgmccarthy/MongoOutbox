@@ -5,8 +5,8 @@ services:
     hostname: mongo1  
     container_name: mongo1
     image: mongo:latest
-    # expose:
-    # - 27017
+    expose:
+      - 27017
     ports:
       - 27011:27017
     volumes:
@@ -20,8 +20,8 @@ services:
     hostname: mongo2
     container_name: mongo2
     image: mongo:latest
-    # expose:
-    # - 27017
+    expose:
+      - 27017
     ports:
     - 27012:27017
     volumes:
@@ -35,8 +35,8 @@ services:
     hostname: mongo3
     container_name: mongo3
     image: mongo:latest
-    # expose:
-    # - 27017
+    expose:
+     - 27017
     ports:
     - 27013:27017
     volumes:
