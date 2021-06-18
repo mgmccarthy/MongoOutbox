@@ -25,13 +25,12 @@ namespace MongoOutbox.Endpoint1
 
             var database = mongoClient.GetDatabase("MongoOutbox");
             var collection = database.GetCollection<Order>("orders");
+            //await collection.InsertOneAsync(message.Order);
 
             //https://docs.particular.net/persistence/mongodb/?#transactions-shared-transactions
-            //var session = context.SynchronizedStorageSession.GetClientSession();
-            //await collection.InsertOneAsync(session, message.Message);
-
-            await collection.InsertOneAsync(message.Order);
-
+            var session = context.SynchronizedStorageSession.GetClientSession();
+            await collection.InsertOneAsync(session, message.Order);
+            
             await context.Publish(new OrderCreated
             {
                 Order = message.Order

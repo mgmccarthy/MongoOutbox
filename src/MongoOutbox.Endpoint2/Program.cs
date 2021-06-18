@@ -44,7 +44,7 @@ namespace MongoOutbox.Endpoint2
 
                 endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
                 endpointConfiguration.AuditProcessedMessagesTo("MongoOutbox.Audit");
-                
+
                 //endpointConfiguration.UsePersistence<InMemoryPersistence>();
                 var persistence = endpointConfiguration.UsePersistence<MongoPersistence>();
                 persistence.MongoClient(new MongoClient("mongodb://localhost:27011"));

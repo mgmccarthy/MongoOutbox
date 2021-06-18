@@ -26,13 +26,13 @@ namespace MongoOutbox.Client
 
             var endpointInstance = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
 
-            await CreateOrder(endpointInstance);
+            //await CreateOrder(endpointInstance);
 
-            //while (true)
-            //{
-            //    await CreateOrder(endpointInstance);
-            //    await Task.Delay(5000);
-            //}
+            while (true)
+            {
+                await CreateOrder(endpointInstance);
+                await Task.Delay(5000);
+            }
         }
 
         private static async Task CreateOrder(IEndpointInstance endpointInstance)
