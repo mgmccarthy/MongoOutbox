@@ -40,7 +40,10 @@ namespace MongoOutbox.Endpoint2
                 var endpointConfiguration = new EndpointConfiguration("MongoOutbox.Endpoint2");
                 endpointConfiguration.EnableInstallers();
 
-                var transport = endpointConfiguration.UseTransport<LearningTransport>();
+                //var transport = endpointConfiguration.UseTransport<LearningTransport>();
+                var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+                transport.UseConventionalRoutingTopology();
+                transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
 
                 endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
                 endpointConfiguration.AuditProcessedMessagesTo("MongoOutbox.Audit");

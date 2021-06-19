@@ -46,6 +46,24 @@ services:
     #restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
 
+  rabbit1:
+    image: "rabbitmq:3-management"
+    hostname: "rabbit1"
+    container_name: rabbit1
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq1"
+    # volumes:
+    #   - rabbit1:/data/db
+    # networks:
+    #   - mongo-elastic
+
 volumes:
   mongo1:
     driver: local
@@ -53,6 +71,8 @@ volumes:
     driver: local
   mongo3:
     driver: local
+  # rabbit1:
+  #   driver: local
 
 networks:
   mongo-elastic:

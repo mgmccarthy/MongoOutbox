@@ -13,7 +13,10 @@ namespace MongoOutbox.Client
 
             var endpointConfiguration = new EndpointConfiguration("MongoDb.Client");
 
-            var transport = endpointConfiguration.UseTransport<LearningTransport>();
+            //var transport = endpointConfiguration.UseTransport<LearningTransport>();
+            var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
+            transport.UseConventionalRoutingTopology();
+            transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
             transport.Routing().RouteToEndpoint(typeof(CreateOrder), "MongoOutbox.Endpoint1");
 
             endpointConfiguration.EnableInstallers();
