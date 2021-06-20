@@ -40,18 +40,16 @@ namespace MongoOutbox.Endpoint1
                 var endpointConfiguration = new EndpointConfiguration("MongoOutbox.Endpoint1");
                 endpointConfiguration.EnableInstallers();
 
-                //var transport = endpointConfiguration.UseTransport<LearningTransport>();
                 var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
                 transport.UseConventionalRoutingTopology();
                 transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
 
-                endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
-                endpointConfiguration.AuditProcessedMessagesTo("MongoOutbox.Audit");
-
-                //endpointConfiguration.UsePersistence<InMemoryPersistence>();
                 var persistence = endpointConfiguration.UsePersistence<MongoPersistence>();
                 persistence.MongoClient(new MongoClient("mongodb://localhost:27011"));
                 persistence.DatabaseName("MongoOutboxEndpoint1");
+
+                endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
+                endpointConfiguration.AuditProcessedMessagesTo("MongoOutbox.Audit");
 
                 endpointConfiguration.UseSerialization<NewtonsoftSerializer>();
                 endpointConfiguration.DefineCriticalErrorAction(OnCriticalError);
