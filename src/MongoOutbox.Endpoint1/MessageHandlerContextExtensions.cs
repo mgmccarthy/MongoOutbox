@@ -5,7 +5,7 @@ namespace MongoOutbox.Endpoint1
 {
     public static class MessageHandlerContextExtensions
     {
-        public static IMongoDatabase Database(this IMessageHandlerContext context)
+        public static IMongoDatabase GetDatabase(this IMessageHandlerContext context)
         {
             return context.Extensions.Get<IMongoDatabase>();
         }

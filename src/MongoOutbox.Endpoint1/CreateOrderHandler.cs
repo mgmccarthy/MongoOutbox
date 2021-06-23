@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using MongoDB.Driver;
 using MongoOutbox.Shared;
 using NServiceBus;
@@ -22,12 +19,6 @@ namespace MongoOutbox.Endpoint1
         public async Task Handle(CreateOrder message, IMessageHandlerContext context)
         {
             Log.Info($"Handling CreateOrder with Id: {message.Order.Id}");
-
-            //TODO: start to move some of this behavior into the NSB pipeline
-            //https://docs.particular.net/nservicebus/pipeline/
-            //https://docs.particular.net/samples/pipeline/
-            //https://docs.particular.net/samples/pipeline/unit-of-work/
-            //https://docs.particular.net/nservicebus/pipeline/unit-of-work
 
             await UseInjectedIMongoClient(message, context);
             //await UseOutboxManagedIMongoClient(message, context);
@@ -66,8 +57,8 @@ namespace MongoOutbox.Endpoint1
 
         private static async Task UsePipelineManagedIMongoClient(CreateOrder message, IMessageHandlerContext context)
         {
-            //.Database is an extension method which obtains an instance of IMongoDatabase created and managed by SynchronizedStorageSessionBehavior, which is registered at startup in the NSB pipeline
-            var database = context.Database();
+            //.GetDatabase is an extension method which obtains an instance of IMongoDatabase created and managed by SynchronizedStorageSessionBehavior, which is registered at startup in the NSB pipeline
+            var database = context.GetDatabase();
             var collection = database.GetCollection<Order>("orders");
             await collection.InsertOneAsync(message.Order);
         }
