@@ -23,11 +23,6 @@ namespace MongoOutbox.Endpoint1
             var builder = Host.CreateDefaultBuilder(args);
             builder.UseConsoleLifetime();
 
-            //builder.ConfigureAppConfiguration((hostContext, configApp) =>
-            //{
-            //    configApp.AddJsonFile("secretsettings.json", true);
-            //});
-
             builder.UseMicrosoftLogFactoryLogging();
             builder.ConfigureLogging((ctx, logging) =>
             {
