@@ -23,17 +23,54 @@ namespace MongoOutbox.Endpoint1
         {
             Log.Info($"Handling CreateOrder with Id: {message.Order.Id}");
 
-            var database = mongoClient.GetDatabase("MongoOutbox");
-            var collection = database.GetCollection<Order>("orders");
-            
-            //https://docs.particular.net/persistence/mongodb/?#transactions-shared-transactions
-            var session = context.SynchronizedStorageSession.GetClientSession();
-            await collection.InsertOneAsync(session, message.Order);
+            //TODO: start to move some of this behavior into the NSB pipeline
+            //https://docs.particular.net/nservicebus/pipeline/
+            //https://docs.particular.net/samples/pipeline/
+            //https://docs.particular.net/samples/pipeline/unit-of-work/
+            //https://docs.particular.net/nservicebus/pipeline/unit-of-work
+
+            await UseInjectedIMongoClient(message, context);
+            //await UseOutboxManagedIMongoClient(message, context);
+            //await UsePipelineManagedIMongoClient(message, context);
             
             await context.Publish(new OrderCreated
             {
                 Order = message.Order
             });
         }
+
+       
+        private async Task UseInjectedIMongoClient(CreateOrder message, IMessageHandlerContext context)
+        {
+            //https://docs.particular.net/persistence/mongodb/?#transactions-shared-transactions
+            var session = context.SynchronizedStorageSession.GetClientSession();
+
+            var database = mongoClient.GetDatabase("MongoOutbox");
+            var collection = database.GetCollection<Order>("orders");
+            //note the Outbox managed session passed into InsertOneAsync
+            //this allows both db and transport ops to participate in an ACID transaction for exactly once message guarentee
+            await collection.InsertOneAsync(session, message.Order);
+        }
+
+        private static async Task UseOutboxManagedIMongoClient(CreateOrder message, IMessageHandlerContext context)
+        {
+            //https://docs.particular.net/persistence/mongodb/?#transactions-shared-transactions
+            var session = context.SynchronizedStorageSession.GetClientSession();
+
+            //note how IMongoClient is accessed from IClientSessionHandle (session) to get an instance of IMongoDatabase
+            //this IMongoClient represents the Outbox managed IMongoClient instance, so no need to pass a different IClientSessionHandle into .InsertOneAsync like with UseInjectedIMongoClient
+            var database = session.Client.GetDatabase("MongoOutbox");
+            var collection = database.GetCollection<Order>("orders");
+            await collection.InsertOneAsync(message.Order);
+        }
+
+        private static async Task UsePipelineManagedIMongoClient(CreateOrder message, IMessageHandlerContext context)
+        {
+            //.Database is an extension method which obtains an instance of IMongoDatabase created and managed by SynchronizedStorageSessionBehavior, which is registered at startup in the NSB pipeline
+            var database = context.Database();
+            var collection = database.GetCollection<Order>("orders");
+            await collection.InsertOneAsync(message.Order);
+        }
+
     }
 }
