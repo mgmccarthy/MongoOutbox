@@ -59,3 +59,7 @@ You'll see there are three ways to tie mongo business data and outbox data toget
 2. Don't inject an IMongoClient and instead, obtain an IMongoDatabase instance from the NSB Persistence managed `SynchronizedStorageSession`. This way, when invoking a db operation on your mongo collection, you don't have to pass in the NSB Persistence managed session, you're already using it.
 3. Encapsulate some of that behavior of #2 in an NSB Behavior. The `SynchronizedStorageSessionBehavior` uses the NSB Persistence managed IMongoClient to obtain and instance of IMongoDatabase, then sets that instance in the ContextBag of `IMessageHandlerContext`. The `MessageHandlerContextExtensions` creates a `GetDatabase` convinence method which gets the IMongoDatabase instace from the 'IMessageHandlerContext' ContextBag and returns it into the handler. The nice part about this appraoch is devs don't have to remember to call `context.SynchronizedStorageSession.GetClientSession();`, and the extension method is right off the messgae context in the handler.
 
+The solution uses the `UseInjectedIMongoClient` be default. To try out the other ways to tie business and outbox data together in the same transaction, try out `UseNsbPersistenceManagedIMongoClientViaSynchronizedStorageSession` and `UsePipelineManagedIMongoClientViaNsbPersistenceAndSynchronizedStorageSession` as well
+
+> NOTE: make sure only one of the three methods is uncommented at any one time when running the solution 
+
