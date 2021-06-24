@@ -21,8 +21,8 @@ namespace MongoOutbox.Endpoint1
             Log.Info($"Handling CreateOrder with Id: {message.Order.Id}");
 
             await UseInjectedIMongoClient(message, context);
-            //await UseOutboxManagedIMongoClient(message, context);
-            //await UsePipelineManagedIMongoClient(message, context);
+            await UseNsbPersistenceManagedIMongoClientViaSynchronizedStorageSession(message, context);
+            //await UsePipelineManagedIMongoClientViaNsbPersistenceAndSynchronizedStorageSession(message, context);
             
             await context.Publish(new OrderCreated
             {
@@ -43,21 +43,25 @@ namespace MongoOutbox.Endpoint1
             await collection.InsertOneAsync(session, message.Order);
         }
 
-        private static async Task UseOutboxManagedIMongoClient(CreateOrder message, IMessageHandlerContext context)
+        private static async Task UseNsbPersistenceManagedIMongoClientViaSynchronizedStorageSession(CreateOrder message, IMessageHandlerContext context)
         {
             //https://docs.particular.net/persistence/mongodb/?#transactions-shared-transactions
             var session = context.SynchronizedStorageSession.GetClientSession();
 
             //note how IMongoClient is accessed from IClientSessionHandle (session) to get an instance of IMongoDatabase
-            //this IMongoClient represents the Outbox managed IMongoClient instance, so no need to pass a different IClientSessionHandle into .InsertOneAsync like with UseInjectedIMongoClient
+            //this IMongoClient represents the NSB Persistence managed IMongoClient instance, so no need to pass a different IClientSessionHandle into .InsertOneAsync like with UseInjectedIMongoClient
             var database = session.Client.GetDatabase("MongoOutbox");
             var collection = database.GetCollection<Order>("orders");
             await collection.InsertOneAsync(message.Order);
         }
 
-        private static async Task UsePipelineManagedIMongoClient(CreateOrder message, IMessageHandlerContext context)
+        private static async Task UsePipelineManagedIMongoClientViaNsbPersistenceAndSynchronizedStorageSession(CreateOrder message, IMessageHandlerContext context)
         {
-            //.GetDatabase is an extension method which obtains an instance of IMongoDatabase created and managed by SynchronizedStorageSessionBehavior, which is registered at startup in the NSB pipeline
+            //.GetDatabase is an extension method which obtains an instance of IMongoDatabase created and managed by SynchronizedStorageSessionBehavior,
+            //The NSB behavior is registered at startup into the NSB pipeline
+            //the behavior uses the NSB Persistence managed IMongoClient
+            //here, the code isn't even concerned/seeing IMongoClient, all of that is encapsulated in the behavior, here, you only have to get an instance of
+            //IMongoDatabase and do your persistence work
             var database = context.GetDatabase();
             var collection = database.GetCollection<Order>("orders");
             await collection.InsertOneAsync(message.Order);
