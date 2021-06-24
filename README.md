@@ -11,7 +11,7 @@ At a high level, there are three endpoints:
 
 You'll need docker installed and running and .NET Core 3.1 on your machine in order to run the solution.
 
-## Running the App
+## Running the Docker Containers
 The master branch contains a docker-compose.yml file that stands up a replica set of MongoDb (required to run NServiceBus Outbox using MongoDb as persistence) and RabbitMq.
 
 In order to run the code in the master branch, follow these steps
@@ -33,6 +33,7 @@ To connect to the replica set, download Robot 3T (a mongo client) and connect to
 
 To access RabbitMQ administration, go to http://localhost:15672/ with username `rabbitmq` and password `rabbitmq`.
 
+## Running the Solution
 To run the solution, check that the MongoOutbox solution has three projects set to startup:
 - MongoOutbox.Client
 - MongoOutbox.Endpoint1
@@ -48,3 +49,13 @@ This is what the MongoDb databases and collection in each database should look l
 - MongoOutboxEndpoint2: this is MongoOutbox.Endpoint2's outbox storage
 
 By convention, NServiceBus keeps an outbox storage db per endpoint.
+
+## Writing Business Data and Outbox Data in the Same Transaction
+If you look at CreateOrderHandler:
+![CreateOrderHandler](CreateOrderHandler.png)
+
+You'll see there are three ways to tie mongo business data and outbox data together in the same db transaction:
+1. Using an injected `IMongoClient` managed by .NET Core DI container (registered as singleton). The `IMongoCollection` that is retrieved via this injected instance needs to be "tied" into the IClientSessionHandle of the NSB Persistence managed IMongoClient in order to allow both business and outbox data to be commited in the same transaction.
+2. Don't inject an IMongoClient and instead, obtain an IMongoDatabase instance from the NSB Persistence managed `SynchronizedStorageSession`. This way, when invoking a db operation on your mongo collection, you don't have to pass in the NSB Persistence managed session, you're already using it.
+3. Encapsulate some of that behavior of #2 in an NSB Behavior. The `SynchronizedStorageSessionBehavior` uses the NSB Persistence managed IMongoClient to obtain and instance of IMongoDatabase, then sets that instance in the ContextBag of `IMessageHandlerContext`. The `MessageHandlerContextExtensions` creates a `GetDatabase` convinence method which gets the IMongoDatabase instace from the 'IMessageHandlerContext' ContextBag and returns it into the handler. The nice part about this appraoch is devs don't have to remember to call `context.SynchronizedStorageSession.GetClientSession();`, and the extension method is right off the messgae context in the handler.
+

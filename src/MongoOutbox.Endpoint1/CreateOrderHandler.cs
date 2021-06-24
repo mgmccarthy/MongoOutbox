@@ -21,7 +21,7 @@ namespace MongoOutbox.Endpoint1
             Log.Info($"Handling CreateOrder with Id: {message.Order.Id}");
 
             await UseInjectedIMongoClient(message, context);
-            await UseNsbPersistenceManagedIMongoClientViaSynchronizedStorageSession(message, context);
+            //await UseNsbPersistenceManagedIMongoClientViaSynchronizedStorageSession(message, context);
             //await UsePipelineManagedIMongoClientViaNsbPersistenceAndSynchronizedStorageSession(message, context);
             
             await context.Publish(new OrderCreated
