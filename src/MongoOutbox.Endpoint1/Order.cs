@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace MongoOutbox.Shared
+namespace MongoOutbox.Endpoint1
 {
     public class Order
     {

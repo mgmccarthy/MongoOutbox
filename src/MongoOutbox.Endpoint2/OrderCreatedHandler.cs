@@ -11,7 +11,7 @@ namespace MongoOutbox.Endpoint2
 
         public Task Handle(OrderCreated message, IMessageHandlerContext context)
         {
-            Log.Info($"Handling OrderCreated with Id: {message.Order.Id}");
+            Log.Info($"Handling OrderCreated with Id: {message.OrderId}");
             return Task.CompletedTask;
         }
     }

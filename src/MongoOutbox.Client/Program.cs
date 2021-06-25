@@ -41,15 +41,9 @@ namespace MongoOutbox.Client
 
         private static async Task CreateOrder(IEndpointInstance endpointInstance)
         {
-            var sendMessage = new CreateOrder
-            {
-                Order = new Order
-                {
-                    Id = Guid.NewGuid()
-                }
-            };
+            var sendMessage = new CreateOrder { OrderId = Guid.NewGuid() };
 
-            Console.WriteLine($"Sending CreateOrder with OrderId: {sendMessage.Order.Id}");
+            Console.WriteLine($"Sending CreateOrder with OrderId: {sendMessage.OrderId}");
 
             var sendOptions = new SendOptions();
             sendOptions.RequireImmediateDispatch();
