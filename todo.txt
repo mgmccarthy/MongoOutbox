@@ -3,8 +3,6 @@
 	- https://docs.particular.net/nservicebus/outbox/#important-design-considerations-transaction-scope
 	- https://docs.particular.net/persistence/mongodb/#transactions
 
-- rabbit db should save to volume so composing down doesn't wipe all database
-
 - add Saga to example just to show how mongo persists saga data and timeout info
 	- https://docs.particular.net/samples/mongodb/simple/
 
