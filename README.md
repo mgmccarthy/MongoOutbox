@@ -50,7 +50,7 @@ This is what the MongoDb databases and collection in each database should look l
 
 ![MongoDatabases](MongoDatabases.png)
 
-- MongoOutbox: this database holds a combination of outbox data (outboxrecord) for othe endpoint and business data, aka, where Orders are written. Co-locating your outbox and business data in the same database is a NServiceBus best practice when using Outbx.
+- MongoOutbox: this database holds a combination of outbox data (outboxrecord) for othe endpoint and business data, aka, where Orders are written. Co-locating your outbox and business data in the same database is a NServiceBus best practice when using Outbox.
 - MongoOutboxEndpoint2: this is MongoOutbox.Endpoint2's outbox storage. There is nothing else being stored here because this endpoint does not write any business data to a database.
 
 By convention, NServiceBus will create a mongo database per endpoint named after the endpoint name. The name, as well as connection string and port are overridable in endpoint config.
