@@ -41,7 +41,7 @@ namespace MongoOutbox.Endpoint1
 
                 var persistence = endpointConfiguration.UsePersistence<MongoPersistence>();
                 persistence.MongoClient(new MongoClient("mongodb://localhost:27011"));
-                persistence.DatabaseName("MongoOutboxEndpoint1");
+                persistence.DatabaseName("MongoOutbox");
 
                 endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
                 endpointConfiguration.AuditProcessedMessagesTo("MongoOutbox.Audit");

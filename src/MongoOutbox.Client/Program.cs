@@ -12,17 +12,18 @@ namespace MongoOutbox.Client
             Console.Title = "MongoDb.Client";
 
             var endpointConfiguration = new EndpointConfiguration("MongoDb.Client");
+            endpointConfiguration.EnableInstallers();
 
             var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
             transport.UseConventionalRoutingTopology();
             transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
             transport.Routing().RouteToEndpoint(typeof(CreateOrder), "MongoOutbox.Endpoint1");
 
-            endpointConfiguration.EnableInstallers();
             endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
             endpointConfiguration.AuditProcessedMessagesTo("MongoOutbox.Audit");
-            endpointConfiguration.EnableInstallers();
+            
             endpointConfiguration.UseSerialization<NewtonsoftSerializer>();
+            
             endpointConfiguration.SendOnly();
 
             var endpointInstance = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);

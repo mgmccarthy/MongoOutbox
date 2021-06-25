@@ -40,15 +40,18 @@ To run the solution, check that the MongoOutbox solution has three projects set 
 - MongoOutbox.Endpoint1
 - MongoOutbox.Endpoint2
 
-Next, hit F5. All three endpoints should stand up. .Client will send a new command, CreateOrder, every 5 seconds. Endpoint1 will handle CreateOrder, insert an Order into Mongo, then publics an event, OrderCreated. Endpoint2 will handle the OrderCreated event and simply write to consle that the event was handled.
+Next, hit F5. All three endpoints should stand up. 
+
+- After a 10 second delay (to alllow Endpoint1 and Endpoint2 to start up and provision the rabbit topology), the .Client project will send a CreateOrder command every 5 seconds. 
+- Endpoint1 will handle CreateOrder, insert an Order into Mongo, then publish the OrderCreated event. 
+- Endpoint2 will handle OrderCreatedand and write to consle that the event was handled (there are no db ops in this endpoint).
 
 This is what the MongoDb databases and collection in each database should look like:
 
 ![MongoDatabases](MongoDatabases.png)
 
-- MongoOutbox: this is the "business" database. Aka, where Orders are written. It has nothing to do with NSB Outbox
-- MongoOutboxEndpoint1: this is MongoOutbox.Endpoint1's outbox storage
-- MongoOutboxEndpoint2: this is MongoOutbox.Endpoint2's outbox storage
+- MongoOutbox: this database holds a combination of outbox data (outboxrecord) for othe endpoint and business data, aka, where Orders are written. Co-locating your outbox and business data in the same database is a NServiceBus best practice when using Outbx.
+- MongoOutboxEndpoint2: this is MongoOutbox.Endpoint2's outbox storage. There is nothing else being stored here because this endpoint does not write any business data to a database.
 
 By convention, NServiceBus will create a mongo database per endpoint named after the endpoint name. The name, as well as connection string and port are overridable in endpoint config.
 
