@@ -1,9 +1,10 @@
-﻿using NServiceBus;
+﻿using System;
+using NServiceBus;
 
 namespace MongoOutbox.Shared
 {
     public class CreateOrder : ICommand
     {
-        public Order Order { get; set; }
+        public Guid OrderId { get; set; }
     }
 }
