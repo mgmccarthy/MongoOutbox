@@ -1,8 +1,3 @@
-- host both business collection and endpoint collection (outboxrecord) under same database
-	- aka, all outbox collections and business data collectiosn should be co-located under MongoDatabase database
-	- https://docs.particular.net/nservicebus/outbox/#important-design-considerations-transaction-scope
-	- https://docs.particular.net/persistence/mongodb/#transactions
-
 - add Saga to example just to show how mongo persists saga data and timeout info
 	- https://docs.particular.net/samples/mongodb/simple/
 
