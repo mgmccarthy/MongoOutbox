@@ -52,7 +52,6 @@ namespace MongoOutbox.Endpoint2
                 endpointConfiguration.EnableOutbox();
 
                 return endpointConfiguration;
-
             });
 
             builder.ConfigureServices((context, services) =>

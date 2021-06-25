@@ -55,7 +55,6 @@ namespace MongoOutbox.Endpoint1
                 pipeline.Register(new SynchronizedStorageSessionBehavior(), "SynchronizedStorageSessionBehavior");
 
                 return endpointConfiguration;
-
             });
 
             builder.ConfigureServices((context, services) =>

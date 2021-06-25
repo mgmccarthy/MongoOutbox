@@ -27,12 +27,15 @@ namespace MongoOutbox.Client
 
             var endpointInstance = await Endpoint.Start(endpointConfiguration).ConfigureAwait(false);
 
-            await CreateOrder(endpointInstance);
-            //while (true)
-            //{
-            //    await CreateOrder(endpointInstance);
-            //    await Task.Delay(5000);
-            //}
+            //wait 10 seconds before dispatching messages so Endpoint1 can stand up and create the rabbit topology
+            await Task.Delay(10000);
+
+            //await CreateOrder(endpointInstance);
+            while (true)
+            {
+                await CreateOrder(endpointInstance);
+                await Task.Delay(5000);
+            }
         }
 
         private static async Task CreateOrder(IEndpointInstance endpointInstance)
