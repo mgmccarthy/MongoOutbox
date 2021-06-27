@@ -1,8 +1,0 @@
-- add Saga to example just to show how mongo persists saga data and timeout info
-	- https://docs.particular.net/samples/mongodb/simple/
-
-- can session be passed in earlier/at a higher point than .InsertOneAsync?
-	- https://docs.particular.net/persistence/mongodb/#transactions-shared-transactions
-	var session = context.SynchronizedStorageSession.GetClientSession();
-	var collection = session.Client.GetDatabase("mydatabase").GetCollection<MyBusinessObject>("mycollection");
-	return collection.InsertOneAsync(session, new MyBusinessObject());
