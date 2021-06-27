@@ -1,12 +1,10 @@
 # MongoOutbox
 This repo demonstrates how to use NServiceBus Outbox with MongoDb for persistence with RabbitMQ as the transport.
 
-Although the handlers in the project contain a direct reference to `var session = context.SynchronizedStorageSession.GetClientSession();` to get a hold of the NSB Persistence managed IMongoDbClient, there are ways to use the NServiceBus pipeline to write behaviors which can "float" the context into handlers remembering to first get, then assign the session (`IClientHandleSession`) in the handler code is taken care of by NSB infrastrcutrue code.
-
-At a high level, there are three endpoints: 
+The solution has three endpoints: 
 - .Client, which is run as a SendOnly endpoint. This endpoint sends a new CreateOrder command to Enpoint1 every 5 seconds.
-- .Endpoint1, which handles CreateOrder. In the handler, an "Order" in inserted into the Mongo and an OrderCreated event is published
-- .Endpoint2, which handler OrderCreated. In the handler, it prints out the info of the event to the console.
+- .Endpoint1, which handles CreateOrder. In the handler, an "Order" in inserted into mongo and an OrderCreated event is published
+- .Endpoint2, which handler OrderCreated. In the handler, it prints out the info of the event to the console (no db or message ops).
 
 You'll need docker installed and running and .NET Core 3.1 on your machine in order to run the solution.
 
@@ -28,7 +26,7 @@ To connect to the replica set, download Robot 3T (a mongo client) and connect to
 - localhost:27012 (master)
 - localhost:27013 (master)
 
-27011 is primary, 012 and 013 are the secondaries (or replicas). There is no security for any of the databases.
+27011 is primary, 012 and 013 are the secondaries (or replicas). There is no security for any of the databases, so no username or password is required.
 
 To access RabbitMQ administration, go to http://localhost:15672/ with username `rabbitmq` and password `rabbitmq`.
 
