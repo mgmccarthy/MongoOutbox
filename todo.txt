@@ -1,2 +1,0 @@
-- add Saga to example just to show how mongo persists saga data and timeout info
-	- https://docs.particular.net/samples/mongodb/simple/

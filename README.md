@@ -1,5 +1,5 @@
 # MongoOutbox
-This repo demonstrates how to use NServiceBus Outbox with MongoDb for persistence with RabbitMQ as the transport.
+This repo demonstrates how to use NServiceBus Outbox with MongoDb for persistence and RabbitMQ as the transport.
 
 The solution has three endpoints: 
 - .Client, which is run as a SendOnly endpoint. This endpoint sends a new CreateOrder command to Enpoint1 every 5 seconds.
