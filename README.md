@@ -40,15 +40,18 @@ To run the solution, check that the MongoOutbox solution has three projects set 
 
 Next, hit F5. All three endpoints should stand up. 
 
-- After a 10 second delay (to alllow Endpoint1 and Endpoint2 to start up and provision the rabbit topology), the .Client project will send a CreateOrder command every 5 seconds. 
-- Endpoint1 will handle CreateOrder, insert an Order into Mongo, then publish the OrderCreated event. 
-- Endpoint2 will handle OrderCreatedand and write to consle that the event was handled (there are no db ops in this endpoint).
+- After a 10 second delay (to alllow Endpoint1 and Endpoint2 to start up and provision the rabbit topology), the .Client project sends a CreateOrder command every 5 seconds. 
+- Endpoint1 
+     - handles CreateOrder (via CreateOrderHandler), insert an Order into mongo, then publish the OrderCreated event.
+     - the OrderCreatedEvent starts an NSB Saga called SampleSaga, which sets a timeout for 15 seconds. The purpose of this Saga is to demonstrate the mongo storage created by saga persistence/timeout usage.
+- Endpoint2 
+     - handles OrderCreated and writes to consle that the event was handled (there are no db ops in this endpoint).
 
-This is what the MongoDb databases and collection in each database should look like:
+This is what the MongoDb databases and collection(s) should look like:
 
 ![MongoDatabases](MongoDatabases.png)
 
-- MongoOutbox: this database holds a combination of outbox data (outboxrecord) for othe endpoint and business data, aka, where Orders are written. Co-locating your outbox and business data in the same database is a NServiceBus best practice when using Outbox.
+- MongoOutbox: this database holds a combination of outbox data (outboxrecord) and business data (orders) for Endpoint1. The business data is where Orders are written. Since Endpoint1 also uses a Saga, you can see the samplessagadata colleciton, where saga state/timeouts are persisted. Co-locating outbox and business data in the same database is an NServiceBus best practice when using Outbox.
 - MongoOutboxEndpoint2: this is MongoOutbox.Endpoint2's outbox storage. There is nothing else being stored here because this endpoint does not write any business data to a database.
 
 By convention, NServiceBus will create a mongo database per endpoint named after the endpoint name. The name, as well as connection string and port are overridable in endpoint config.
