@@ -9,7 +9,9 @@ The solution has three endpoints:
 You'll need docker installed and running and .NET Core 3.1 on your machine in order to run the solution.
 
 ## Running the Docker Containers
-The docker-compose.yml file stands up a replica set of MongoDb (required to run NServiceBus persistence) and RabbitMQ.
+The docker-compose.yml file stands up a replica set of MongoDb (required for using mongo as NServiceBus persistence) and RabbitMQ.
+
+> NOTE: there is a docker-compose-mongo-only.yml file for only running mongo in a container. The assumption is Rabbit is installed and running lcoally. Usage is `docker-compose -f docker-compose-mongo-only.yml up`
 
 In order to build all the contaiers the solution relies on, follow these steps:
 
