@@ -37,7 +37,8 @@ namespace MongoOutbox.Endpoint2
 
                 var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
                 transport.UseConventionalRoutingTopology();
-                transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
+                //transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
+                transport.ConnectionString("host=localhost;username=guest;password=guest");
 
                 var persistence = endpointConfiguration.UsePersistence<MongoPersistence>();
                 persistence.MongoClient(new MongoClient("mongodb://localhost:27011"));

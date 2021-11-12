@@ -16,7 +16,8 @@ namespace MongoOutbox.Client
 
             var transport = endpointConfiguration.UseTransport<RabbitMQTransport>();
             transport.UseConventionalRoutingTopology();
-            transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
+            //transport.ConnectionString("host=localhost;username=rabbitmq;password=rabbitmq");
+            transport.ConnectionString("host=localhost;username=guest;password=guest");
             transport.Routing().RouteToEndpoint(typeof(CreateOrder), "MongoOutbox.Endpoint1");
 
             endpointConfiguration.SendFailedMessagesTo("MongoOutbox.Error");
