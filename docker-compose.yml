@@ -1,6 +1,6 @@
 version: "3"
 services:
-
+  
   mongo1:
     hostname: mongo1  
     container_name: mongo1
@@ -15,7 +15,7 @@ services:
       - mongo-elastic
     #restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
-
+  
   mongo2:
     hostname: mongo2
     container_name: mongo2
@@ -30,7 +30,7 @@ services:
       - mongo-elastic
     #restart: always
     entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "rs0" ]
-
+  
   mongo3:
     hostname: mongo3
     container_name: mongo3
@@ -54,3 +54,30 @@ services:
       RABBITMQ_DEFAULT_USER: "rabbitmq"
       RABBITMQ_DEFAULT_PASS: "rabbitmq"
       RABBITMQ_DEFAULT_VHOST: "/"
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq1"
+    volumes:
+      # https://github.com/docker-library/rabbitmq/issues/392
+      - /rabbitmq-data/:/var/lib/rabbitmq/
+    # networks:
+    #   - mongo-elastic
+
+volumes:
+  mongo1:
+    driver: local
+  mongo2:
+    driver: local
+  mongo3:
+    driver: local
+  rabbitmq-data:
+      driver: local
+
+networks:
+  mongo-elastic:
+    driver: bridge
+
+#https://gist.github.com/asoorm/7822cc742831639c93affd734e97ce4f
+#https://docs.mongodb.com/manual/reference/connection-string/#examples
